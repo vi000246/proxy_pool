@@ -36,9 +36,10 @@ class ProxyManager(object):
         fetch proxy into Db by ProxyGetter
         :return:
         """
+        # loop config裡設置的proxy伺服器
         for proxyGetter in self.config.proxy_getter_functions:
             proxy_set = set()
-            # fetch raw proxy
+            # fetch raw proxy (動態載入GetFreeProxy裡的methods 會yield return 一組proxy ip回來)
             for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
                 if proxy.strip():
                     self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
@@ -46,12 +47,13 @@ class ProxyManager(object):
 
             # store raw proxy
             self.db.changeTable(self.raw_proxy_queue)
+            # 將proxy_set的proxy存進DB
             for proxy in proxy_set:
                 self.db.put(proxy)
 
     def get(self):
         """
-        return a useful proxy
+        return a useful proxy  (從DB useful_proxy的key取出proxy)
         :return:
         """
         self.db.changeTable(self.useful_proxy_queue)

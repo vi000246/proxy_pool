@@ -68,6 +68,7 @@ class DbClient(object):
         else:
             pass
         assert __type, 'type error, Not support DB type: {}'.format(self.config.db_type)
+        # 動態import DB裡的 RedisClient.py或是SsdbClient.py
         self.client = getattr(__import__(__type), __type)(name=self.config.db_name,
                                                           host=self.config.db_host,
                                                           port=self.config.db_port)

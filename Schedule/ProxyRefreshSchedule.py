@@ -71,11 +71,12 @@ def refreshPool():
 def main(process_num=30):
     p = ProxyRefreshSchedule()
 
-    # 获取新代理
+    # 获取新代理 將代理存進DB raw_proxy的key
     p.refresh()
 
-    # 检验新代理
+    # 检验新代理 將代理存進DB useful_proxy的key
     pl = []
+    # 開啟數個process 執行refreshPool
     for num in range(process_num):
         proc = Thread(target=refreshPool, args=())
         pl.append(proc)
